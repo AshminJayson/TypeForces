@@ -4,16 +4,28 @@ import { Injectable } from '@angular/core';
     providedIn: 'root',
 })
 export class StopwatchService {
-    elapsedtime !: number;
+    starttime !: number;
 
     constructor() {}
 
     start() {
-        this.elapsedtime = Date.now()
-        console.log(this.elapsedtime)
+        this.starttime = Date.now()
+        // console.log(this.elapsedtime)
     }
 
-    getTime(): number {
-        return this.elapsedtime;
+    getTimeMilliSeconds() { 
+        return Date.now() - this.starttime;
+    }
+
+    getTimeSeconds(): number {
+        return (Date.now() - this.starttime) / 1000;
+    }
+
+    getTimeMinutes() : number {
+        return (Date.now() - this.starttime) / (1000 * 60);
+    }
+
+    stop() {
+        this.starttime = 0
     }
 }

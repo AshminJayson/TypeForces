@@ -1,5 +1,15 @@
-<div class="flex flex-wrap w-3/4 m-auto" id="typingspace">
+<div class="flex flex-wrap justify-center w-3/4" id="typingspace">
     <p class="my-2" *ngFor="let word of wordgenarray">
         <span #charactersonscreen *ngFor="let character of word.split('')">{{character}}</span>
     </p>
 </div>
+<div class="flex justify-center gap-20 m-10" id="scores">
+    <p>WPM</p>
+    <p>{{wpm}}</p>
+    <p>ACCURACY</p>
+    <p>{{accuracy}}</p>
+    <p>TIME</p>
+    <p>{{elapsedtime}}</p>
+</div>
+<p class="italic text-slate-800">Press CTRL to Reset</p>
+

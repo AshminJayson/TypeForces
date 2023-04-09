@@ -1,17 +1,26 @@
-// class="inline-block my-2 mr-1 text-lg"
+#scores {
 
-#typingspace > p {
-    margin-right: 1rem;
+    p:nth-child(even) {
+    width: 5px;
+    }
+
 }
 
+#typingspace {
+    p {
+    margin-right: 1rem;
+    }
+}
 
-#typingspace > p > span {
+#typingspace {
+    p { span {
     display: inline-block;
     margin-top: 0.75rem;
     margin-bottom: 0.75rem;
     margin-right: 0.2rem;
     font-size: 1.5rem;
     line-height: 1.5rem;
+    } }    
 }
 
 .correct {
@@ -23,7 +32,27 @@
 }
 
 .active {
-    color: green;
     transform: translateY(-3px);
-    background: #f6f6f6;
+}
+
+.active::before {
+    content: "";
+    position: absolute;
+    height: 2px;
+    width: 100%;
+    bottom: 0;
+    background-color: white;
+    animation: blinkingcursor infinite 1.25s;
+}
+
+
+
+@keyframes blinkingcursor {
+
+    0% {
+        background: #000;
+    }
+    100% {
+        visibility: visible;
+    }
 }
