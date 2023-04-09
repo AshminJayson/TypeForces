@@ -7,5 +7,13 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
     title = 'TypeForces';
+    resetState : boolean = true;
 
+
+    resetChild(event: boolean) {
+        this.resetState = !this.resetState;
+        setTimeout(() => {
+            this.resetState = !this.resetState;
+        }, 1);
+    }
 }

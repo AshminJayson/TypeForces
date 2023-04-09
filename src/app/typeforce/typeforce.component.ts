@@ -1,12 +1,13 @@
-import { AfterViewInit, Component, ElementRef, HostListener,  QueryList, Renderer2, ViewChildren, ViewContainerRef } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, EventEmitter, HostListener,  OnInit,  Output,  QueryList, Renderer2, ViewChildren, ViewContainerRef } from '@angular/core';
 import { StopwatchService } from './services/stopwatch.service';
+import { StorygptService } from './services/storygpt.service';
 
 @Component({
     selector: 'app-typeforce',
     templateUrl: './typeforce.component.html',
     styleUrls: ['./typeforce.component.scss'],
 })
-export class TypeforceComponent implements AfterViewInit {
+export class TypeforceComponent implements AfterViewChecked  {
 
     // Text variables
     textgen : string = 'random text that I just got from somewhere to be tested in this setting lemme make this a lot longer so that I can appreciate the changes that are here.'
@@ -15,11 +16,14 @@ export class TypeforceComponent implements AfterViewInit {
     charactergenarray : string[] = [];
     currentarrayindex : number = 0;
     valid : string[] = [];
-    
+
+    // States
+    viewcheckedstate : boolean = false;
 
     // Typing state
     status : number = 0;
     
+
     // Typing scores
     correctcharacters : number = 0;
     wpm : number = 0;
@@ -27,14 +31,25 @@ export class TypeforceComponent implements AfterViewInit {
     elapsedtime : number = 0;
 
 
+    @Output() resetEvent = new EventEmitter<boolean>();
+
+
     
-    
-    constructor(private renderer : Renderer2, private stopwatch : StopwatchService) {
-        this.wordgenarray = this.textgen.split(/(?<=\s)/);
-        this.charactergenarray = this.textgen.split('');
-        this.valid = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,rand '.split('')
-        this.valid.push('Backspace')
+    constructor(private renderer : Renderer2, private stopwatch : StopwatchService, private storyGenerator : StorygptService) {
+
+        this.storyGenerator.generateStory().then(res => {
+            
+            this.textgen = res.trim();
+            this.wordgenarray = this.textgen.split(/(?<=\s)/);
+            this.charactergenarray = this.textgen.split('');
+            this.valid = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ., '.split('')
+            this.valid.push('Backspace', "'", '"')
+        }
+        )
+        // console.log(this.valid)
     }
+
+
 
     // Modifier to update DOM state of character spans
     @ViewChildren('charactersonscreen', { read: ElementRef }) charactersonscreen !: QueryList<ElementRef>;
@@ -42,6 +57,10 @@ export class TypeforceComponent implements AfterViewInit {
     // Listener that checks for keypress events
     @HostListener('document:keydown', ['$event'])
     trackKeyPress(event: KeyboardEvent) {
+
+        if (event.key === 'Control') this.resetTest()
+
+
         if (!this.valid.includes(event.key)) return
 
         if (this.status === 0) {
@@ -65,14 +84,6 @@ export class TypeforceComponent implements AfterViewInit {
 
     // Logic to determine correct key press
     checkKeyPress(keypressed: string) {
-
-
-
-        if (keypressed === 'Control') {
-
-        }
-
-
         
         if (keypressed === this.charactergenarray[this.currentarrayindex]) this.setCorrectCharacter()
         else if (keypressed === 'Backspace') this.rewindActiveCharacter()
@@ -132,10 +143,19 @@ export class TypeforceComponent implements AfterViewInit {
         this.wpm = Math.round(this.correctcharacters  / (5 * this.stopwatch.getTimeMinutes()))
         this.accuracy = Math.round((this.correctcharacters / this.textgen.length) * 100)
     }
+    
+
+    resetTest() {
+        this.resetEvent.emit(true)
+    }
 
 
-    ngAfterViewInit(): void {
-        this.renderer.setAttribute(this.charactersonscreen.get(0)?.nativeElement, 'class', 'active')
+// Set first active character
+    ngAfterViewChecked(): void {
+        if(this.charactersonscreen.get(0) && !this.viewcheckedstate) { 
+            this.renderer.setAttribute(this.charactersonscreen.get(0)?.nativeElement, 'class', 'active')
+            this.viewcheckedstate = true       
+        }   
     }
 
 
