@@ -1,0 +1,5 @@
+<div class="flex flex-wrap w-3/4 m-auto" id="typingspace">
+    <p class="my-2" *ngFor="let word of wordgenarray">
+        <span #charactersonscreen *ngFor="let character of word.split('')">{{character}}</span>
+    </p>
+</div>
