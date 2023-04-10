@@ -22,10 +22,10 @@ export class StorygptService {
         // console.log(this.openai)
     }
 
-    async generateStory() { 
+    async generateStory(maxwords : number) { 
         const response = await this.openai.createCompletion({
             model: 'text-davinci-003',
-            prompt: 'write me a 30 word story',
+            prompt: `write me a ${maxwords} word story`,
             max_tokens: 500,
         })
 

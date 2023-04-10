@@ -1,4 +1,4 @@
-import { AfterViewChecked,  Component, ElementRef, EventEmitter, HostListener,  Output,  QueryList, Renderer2, ViewChildren  } from '@angular/core';
+import { AfterViewChecked,  Component, ElementRef, EventEmitter, HostListener,  Input,  Output,  QueryList, Renderer2, ViewChildren  } from '@angular/core';
 import { StopwatchService } from './services/stopwatch.service';
 import { StorygptService } from './services/storygpt.service';
 
@@ -16,6 +16,7 @@ export class TypeforceComponent implements AfterViewChecked  {
     charactergenarray : string[] = [];
     currentarrayindex : number = 0;
     valid : string[] = [];
+    maxwords : number = 40;
 
     // States
     viewcheckedstate : boolean = false;
@@ -39,9 +40,10 @@ export class TypeforceComponent implements AfterViewChecked  {
     
     constructor(private renderer : Renderer2, private stopwatch : StopwatchService, private storyGenerator : StorygptService) {
 
+        console.log(this.maxwords)
         this.nextStoryTimer()
 
-        this.storyGenerator.generateStory().then(res => {
+        this.storyGenerator.generateStory(this.maxwords).then(res => {
             
             this.textgen = res.trim();
             this.wordgenarray = this.textgen.split(/(?<=\s)/);
@@ -74,8 +76,7 @@ export class TypeforceComponent implements AfterViewChecked  {
 
             const timing = setInterval(() => {
                 this.elapsedtime = this.stopwatch.getTimeSeconds();
-                this.wpm = Math.round(this.correctcharacters  / (5 * this.stopwatch.getTimeMinutes()))
-                this.accuracy = Math.round((this.correctcharacters / this.textgen.length) * 100)
+
 
                 if (this.status === 2) {
                     clearInterval(timing);
@@ -155,13 +156,14 @@ export class TypeforceComponent implements AfterViewChecked  {
     // Report the score
     reportScore() {
         this.status = 2
-
+        this.wpm = Math.round(this.correctcharacters  / (5 * this.stopwatch.getTimeMinutes()))
+        this.accuracy = Math.round((this.correctcharacters / this.textgen.length) * 100)
 
         this.nextStoryTimer()
 
         setTimeout(() => {
             this.resetTest()
-        }, 3000);
+        }, 5000);
     }
 
     nextStoryTimer() {

@@ -1,12 +1,12 @@
 <div class="min-h-[4rem] w-full">
     <p *ngIf="nextstory" class="mb-8 text-center">Next Story in {{remainingtime}} seconds</p>
 </div>
-<div class="flex flex-wrap w-3/4 min-h-[15rem]" id="typingspace">
+<div class="flex flex-wrap w-5/6 h-[18rem]" id="typingspace">
     <p class="my-2" *ngFor="let word of wordgenarray">
         <span #charactersonscreen *ngFor="let character of word.split('')">{{character}}</span>
     </p>
 </div>
-<div class="flex justify-center gap-20 m-10" id="scores">
+<div class="flex justify-center gap-20 m-10 select-none" id="scores">
     <p>WPM</p>
     <p>{{wpm}}</p>
     <p>ACCURACY</p>
@@ -14,5 +14,5 @@
     <p>TIME</p>
     <p>{{elapsedtime}}</p>
 </div>
-<p class="font-semibold text-center cursor-pointer text-slate-800" (click)="resetTest()">Press CTRL or CLICK to Reset</p>
+<p class="font-semibold text-center cursor-pointer select-none text-slate-800" (click)="resetTest()">Press CTRL or CLICK to Reset</p>
 

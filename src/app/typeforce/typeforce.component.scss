@@ -20,7 +20,7 @@
     margin-top: 0.75rem;
     margin-bottom: 0.75rem;
     margin-right: 0.2rem;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     line-height: 1.5rem;
     } }    
 }
@@ -49,7 +49,7 @@ span[waswrong = 'true'].correct {
     height: 2px;
     width: 100%;
     bottom: 0;
-    background-color: white;
+    background-color: black;
     animation: blinkingcursor infinite 1.25s;
 }
 
