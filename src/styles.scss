@@ -6,11 +6,28 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --correct-color: lightgray;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: "Orbitron", sans-serif;
+    color: black;
+    
+}
+
+@media screen and (prefers-color-scheme : dark) {
+    * {
+        color: white;
+        background: #000;
+    }
+
+    :root {
+        --correct-color: grey;
+    }
 }
 
 @media screen and (max-width: 780px) {
@@ -25,3 +42,5 @@
         font-size: 40%;
     }
 }
+
+

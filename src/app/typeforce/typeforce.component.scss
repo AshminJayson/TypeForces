@@ -1,4 +1,6 @@
-#scores {
+
+
+#scores {   
 
     p:nth-child(even) {
     width: 5px;
@@ -23,8 +25,14 @@
     } }    
 }
 
+
 .correct {
-    color: blue;
+    color: var(--correct-color);
+}
+
+
+span[waswrong = 'true'].correct {
+    color: rgba(255, 217, 0, 0.598);
 }
 
 .incorrect {
@@ -56,3 +64,4 @@
         visibility: visible;
     }
 }
+

@@ -10,7 +10,7 @@ import { StorygptService } from './services/storygpt.service';
 export class TypeforceComponent implements AfterViewChecked  {
 
     // Text variables
-    textgen : string = 'random text that I just got from somewhere to be tested in this setting lemme make this a lot longer so that I can appreciate the changes that are here.'
+    textgen : string = 'random text that I just got from somewhere to the changes that are here.'
     
     wordgenarray : string[] = [];
     charactergenarray : string[] = [];
@@ -19,7 +19,7 @@ export class TypeforceComponent implements AfterViewChecked  {
 
     // States
     viewcheckedstate : boolean = false;
-    remainingtime : number = 5;
+    remainingtime : number = 2;
     nextstory : boolean = false;
 
     // Typing state
@@ -62,6 +62,8 @@ export class TypeforceComponent implements AfterViewChecked  {
     @HostListener('document:keydown', ['$event'])
     trackKeyPress(event: KeyboardEvent) {
 
+
+
         if (event.key === 'Control') this.resetTest()
 
 
@@ -72,6 +74,8 @@ export class TypeforceComponent implements AfterViewChecked  {
 
             const timing = setInterval(() => {
                 this.elapsedtime = this.stopwatch.getTimeSeconds();
+                this.wpm = Math.round(this.correctcharacters  / (5 * this.stopwatch.getTimeMinutes()))
+                this.accuracy = Math.round((this.correctcharacters / this.textgen.length) * 100)
 
                 if (this.status === 2) {
                     clearInterval(timing);
@@ -84,6 +88,8 @@ export class TypeforceComponent implements AfterViewChecked  {
         
         this.checkKeyPress(event.key)
     }
+
+    
 
 
     // Logic to determine correct key press
@@ -122,7 +128,10 @@ export class TypeforceComponent implements AfterViewChecked  {
     // Validate the current character
     setCorrectCharacter() {
         const characterunderstudy = this.charactersonscreen.get(this.currentarrayindex)
+        
         this.renderer.setAttribute(characterunderstudy?.nativeElement, 'class', 'correct')
+
+
         this.currentarrayindex++;
 
         this.correctcharacters++;
@@ -135,6 +144,8 @@ export class TypeforceComponent implements AfterViewChecked  {
 
         const characterunderstudy = this.charactersonscreen.get(this.currentarrayindex)
         this.renderer.setAttribute(characterunderstudy?.nativeElement, 'class', 'incorrect')
+        this.renderer.setAttribute(characterunderstudy?.nativeElement, 'wasWrong', 'true')
+
         this.currentarrayindex++;
 
         this.setActiveCharacter()
@@ -144,8 +155,7 @@ export class TypeforceComponent implements AfterViewChecked  {
     // Report the score
     reportScore() {
         this.status = 2
-        this.wpm = Math.round(this.correctcharacters  / (5 * this.stopwatch.getTimeMinutes()))
-        this.accuracy = Math.round((this.correctcharacters / this.textgen.length) * 100)
+
 
         this.nextStoryTimer()
 
