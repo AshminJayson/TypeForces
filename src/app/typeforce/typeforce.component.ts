@@ -19,7 +19,7 @@ export class TypeforceComponent implements AfterViewChecked  {
 
     // States
     viewcheckedstate : boolean = false;
-    remainingtime : number = 2;
+    remainingtime : number = 0;
     nextstory : boolean = false;
 
     // Typing state
@@ -47,14 +47,13 @@ export class TypeforceComponent implements AfterViewChecked  {
 
     setNewStory() {
 
+        
+        
         this.nextStoryTimer()
         
         this.storyGenerator.generateStory(this.maxwords).then(res => {
             
-            this.status = 0;
-            this.correctcharacters = 0;
-            this.wpm = 0;  
-            this.accuracy = 0;
+            this.resetScores()
             this.textgen = res.trim();
             this.currentarrayindex = 0;
             this.wordgenarray = this.textgen.split(/(?<=\s)/);
@@ -63,7 +62,21 @@ export class TypeforceComponent implements AfterViewChecked  {
             this.valid.push('Backspace', "'", '"')
         }
         )
+
+
+        this.charactersonscreen?.forEach(character => {
+            this.renderer.setAttribute(character.nativeElement, 'class', '')
+        })
     }
+
+    resetScores() {
+        this.viewcheckedstate = false;
+        this.status = 0;
+        this.correctcharacters = 0;
+        this.wpm = 0;  
+        this.accuracy = 0;
+    }
+
 
 
 
@@ -76,7 +89,7 @@ export class TypeforceComponent implements AfterViewChecked  {
 
 
 
-        if (event.key === 'Control') this.setNewStory()
+        if (event.key === 'Control') this.reportScore()
 
 
         if (!this.valid.includes(event.key)) return
@@ -165,19 +178,20 @@ export class TypeforceComponent implements AfterViewChecked  {
         this.wpm = Math.round(this.correctcharacters  / (5 * this.stopwatch.getTimeMinutes()))
         this.accuracy = Math.round((this.correctcharacters / this.textgen.length) * 100)
 
+        this.remainingtime = 4;
         this.nextStoryTimer()
 
         setTimeout(() => {
             this.setNewStory()
-        }, 5000);
+        }, 4000);
     }
 
     nextStoryTimer() {
         this.nextstory = true;
         const timing = setInterval(() => {
-            if (this.remainingtime === 0) {
+            if (this.remainingtime === 0 || this.status != 2) {
                 clearInterval(timing);
-                this.remainingtime = 6;
+                this.remainingtime = 4;
                 this.nextstory = false;
             }
             this.remainingtime--;
