@@ -16,7 +16,6 @@ export class TypeforceComponent implements AfterViewChecked  {
     charactergenarray : string[] = [];
     currentarrayindex : number = 0;
     valid : string[] = [];
-    maxwords : number = 40;
 
     // States
     viewcheckedstate : boolean = false;
@@ -34,25 +33,36 @@ export class TypeforceComponent implements AfterViewChecked  {
     elapsedtime : number = 0;
 
 
+    
+    @Input() maxwords : number = 0;
     @Output() resetEvent = new EventEmitter<boolean>();
 
 
     
-    constructor(private renderer : Renderer2, private stopwatch : StopwatchService, private storyGenerator : StorygptService) {
+    constructor(private renderer : Renderer2, private stopwatch : StopwatchService, private storyGenerator : StorygptService) {}
 
-        console.log(this.maxwords)
+    ngOnInit() { 
+        this.setNewStory()
+    }
+
+    setNewStory() {
+
         this.nextStoryTimer()
-
+        
         this.storyGenerator.generateStory(this.maxwords).then(res => {
             
+            this.status = 0;
+            this.correctcharacters = 0;
+            this.wpm = 0;  
+            this.accuracy = 0;
             this.textgen = res.trim();
+            this.currentarrayindex = 0;
             this.wordgenarray = this.textgen.split(/(?<=\s)/);
             this.charactergenarray = this.textgen.split('');
             this.valid = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,?/><;:][]{}()!@#$%^&*1234567890-_=+ '.split('')
             this.valid.push('Backspace', "'", '"')
         }
         )
-        // console.log(this.valid)
     }
 
 
@@ -66,12 +76,13 @@ export class TypeforceComponent implements AfterViewChecked  {
 
 
 
-        if (event.key === 'Control') this.resetTest()
+        if (event.key === 'Control') this.setNewStory()
 
 
         if (!this.valid.includes(event.key)) return
 
         if (this.status === 0) {
+
             this.stopwatch.start()
 
             const timing = setInterval(() => {
@@ -129,14 +140,10 @@ export class TypeforceComponent implements AfterViewChecked  {
     // Validate the current character
     setCorrectCharacter() {
         const characterunderstudy = this.charactersonscreen.get(this.currentarrayindex)
-        
         this.renderer.setAttribute(characterunderstudy?.nativeElement, 'class', 'correct')
 
-
         this.currentarrayindex++;
-
         this.correctcharacters++;
-
         this.setActiveCharacter()
     }
 
@@ -148,7 +155,6 @@ export class TypeforceComponent implements AfterViewChecked  {
         this.renderer.setAttribute(characterunderstudy?.nativeElement, 'wasWrong', 'true')
 
         this.currentarrayindex++;
-
         this.setActiveCharacter()
 
     }
@@ -162,7 +168,7 @@ export class TypeforceComponent implements AfterViewChecked  {
         this.nextStoryTimer()
 
         setTimeout(() => {
-            this.resetTest()
+            this.setNewStory()
         }, 5000);
     }
 
