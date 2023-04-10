@@ -19,6 +19,8 @@ export class TypeforceComponent implements AfterViewChecked  {
 
     // States
     viewcheckedstate : boolean = false;
+    remainingtime : number = 3;
+    nextstory : boolean = false;
 
     // Typing state
     status : number = 0;
@@ -37,12 +39,14 @@ export class TypeforceComponent implements AfterViewChecked  {
     
     constructor(private renderer : Renderer2, private stopwatch : StopwatchService, private storyGenerator : StorygptService) {
 
+        this.nextStoryTimer()
+
         this.storyGenerator.generateStory().then(res => {
             
             this.textgen = res.trim();
             this.wordgenarray = this.textgen.split(/(?<=\s)/);
             this.charactergenarray = this.textgen.split('');
-            this.valid = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ., '.split('')
+            this.valid = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,?/><;:][]{}()!@#$%^&*1234567890-_=+ '.split('')
             this.valid.push('Backspace', "'", '"')
         }
         )
@@ -142,6 +146,24 @@ export class TypeforceComponent implements AfterViewChecked  {
         this.status = 2
         this.wpm = Math.round(this.correctcharacters  / (5 * this.stopwatch.getTimeMinutes()))
         this.accuracy = Math.round((this.correctcharacters / this.textgen.length) * 100)
+
+        this.nextStoryTimer()
+
+        setTimeout(() => {
+            this.resetTest()
+        }, 3000);
+    }
+
+    nextStoryTimer() {
+        this.nextstory = true;
+        const timing = setInterval(() => {
+            if (this.remainingtime === 0) {
+                clearInterval(timing);
+                this.remainingtime = 3;
+                this.nextstory = false;
+            }
+            this.remainingtime--;
+        }, 1000)
     }
     
 
