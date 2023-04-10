@@ -1,7 +1,7 @@
 <div class="min-h-[4rem] w-full">
     <p *ngIf="nextstory" class="mb-8 text-center">Next Story in {{remainingtime}} seconds</p>
 </div>
-<div class="flex flex-wrap justify-center w-3/4 min-h-[15rem]" id="typingspace">
+<div class="flex flex-wrap w-3/4 min-h-[15rem]" id="typingspace">
     <p class="my-2" *ngFor="let word of wordgenarray">
         <span #charactersonscreen *ngFor="let character of word.split('')">{{character}}</span>
     </p>

@@ -1,4 +1,4 @@
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, EventEmitter, HostListener,  OnInit,  Output,  QueryList, Renderer2, ViewChildren, ViewContainerRef } from '@angular/core';
+import { AfterViewChecked,  Component, ElementRef, EventEmitter, HostListener,  Output,  QueryList, Renderer2, ViewChildren  } from '@angular/core';
 import { StopwatchService } from './services/stopwatch.service';
 import { StorygptService } from './services/storygpt.service';
 
@@ -19,7 +19,7 @@ export class TypeforceComponent implements AfterViewChecked  {
 
     // States
     viewcheckedstate : boolean = false;
-    remainingtime : number = 3;
+    remainingtime : number = 5;
     nextstory : boolean = false;
 
     // Typing state
@@ -159,7 +159,7 @@ export class TypeforceComponent implements AfterViewChecked  {
         const timing = setInterval(() => {
             if (this.remainingtime === 0) {
                 clearInterval(timing);
-                this.remainingtime = 3;
+                this.remainingtime = 6;
                 this.nextstory = false;
             }
             this.remainingtime--;
