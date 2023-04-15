@@ -1,4 +1,4 @@
-import { AfterViewChecked,  Component, ElementRef, EventEmitter, HostListener,  Input,  Output,  QueryList, Renderer2, ViewChildren  } from '@angular/core';
+import { AfterViewChecked,  Component, ElementRef, EventEmitter, HostListener,  Input,  Output,  QueryList, Renderer2, ViewChild, ViewChildren  } from '@angular/core';
 import { StopwatchService } from './services/stopwatch.service';
 import { StorygptService } from './services/storygpt.service';
 
@@ -48,7 +48,6 @@ export class TypeforceComponent implements AfterViewChecked  {
     setNewStory() {
 
         
-        
         this.nextStoryTimer()
         
         this.storyGenerator.generateStory(this.maxwords).then(res => {
@@ -60,8 +59,21 @@ export class TypeforceComponent implements AfterViewChecked  {
             this.charactergenarray = this.textgen.split('');
             this.valid = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,?/><;:][]{}()!@#$%^&*1234567890-_=+ '.split('')
             this.valid.push('Backspace', "'", '"')
+
         }
         )
+
+
+        // Testing String to not finish API credits
+
+        // let res = "jsd;flkjakl;fjal;ksjdf;lkajfdlkjalkfjdlajf asdjfl;kajfdlk aksdfj;lakjf"
+        // this.resetScores()
+        // this.textgen = res.trim();
+        // this.currentarrayindex = 0;
+        // this.wordgenarray = this.textgen.split(/(?<=\s)/);
+        // this.charactergenarray = this.textgen.split('');
+        // this.valid = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,?/><;:][]{}()!@#$%^&*1234567890-_=+ '.split('')
+        // this.valid.push('Backspace', "'", '"')
 
 
         this.charactersonscreen?.forEach(character => {
@@ -83,13 +95,21 @@ export class TypeforceComponent implements AfterViewChecked  {
     // Modifier to update DOM state of character spans
     @ViewChildren('charactersonscreen', { read: ElementRef }) charactersonscreen !: QueryList<ElementRef>;
 
+
+
+
+    timer: any;
     // Listener that checks for keypress events
     @HostListener('document:keydown', ['$event'])
     trackKeyPress(event: KeyboardEvent) {
-
-
-
-        if (event.key === 'Control') this.reportScore()
+        
+        if (event.key === 'Tab') {
+            event.preventDefault();
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => {
+                this.reportScore();
+            }, 500)
+        };
 
 
         if (!this.valid.includes(event.key)) return
