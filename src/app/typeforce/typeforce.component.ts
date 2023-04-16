@@ -10,6 +10,7 @@ import { StorygptService } from './services/storygpt.service';
 export class TypeforceComponent implements AfterViewChecked  {
 
     // Text variables
+    storytype : string = 'HAPPINESS'
     textgen : string = 'random text that I just got from somewhere to the changes that are here.'
     
     wordgenarray : string[] = [];
@@ -45,12 +46,26 @@ export class TypeforceComponent implements AfterViewChecked  {
         this.setNewStory()
     }
 
+
+    template() {
+        let res = "Zero is a beautiful number. Not because it is round and cute (that could be an argument for it nevertheless) but because what it signifies. It marks the beginning of something. It marks the lowest something, or someone can go."
+        this.resetScores()
+        this.textgen = res.trim();
+        this.currentarrayindex = 0;
+        this.wordgenarray = this.textgen.split(/(?<=\s)/);
+        this.charactergenarray = this.textgen.split('');
+        this.valid = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,?/><;:][]{}()!@#$%^&*1234567890-_=+ '.split('')
+        this.valid.push('Backspace', "'", '"')
+    }
+
+
+
     setNewStory() {
 
         
         this.nextStoryTimer()
         
-        this.storyGenerator.generateStory(this.maxwords).then(res => {
+        this.storyGenerator.generateStory(this.maxwords, this.storytype).then(res => {
             
             this.resetScores()
             this.textgen = res.trim();
@@ -64,17 +79,8 @@ export class TypeforceComponent implements AfterViewChecked  {
         )
 
 
-        // Testing String to not finish API credits
-
-        // let res = "jsd;flkjakl;fjal;ksjdf;lkajfdlkjalkfjdlajf asdjfl;kajfdlk aksdfj;lakjf"
-        // this.resetScores()
-        // this.textgen = res.trim();
-        // this.currentarrayindex = 0;
-        // this.wordgenarray = this.textgen.split(/(?<=\s)/);
-        // this.charactergenarray = this.textgen.split('');
-        // this.valid = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,?/><;:][]{}()!@#$%^&*1234567890-_=+ '.split('')
-        // this.valid.push('Backspace', "'", '"')
-
+        // Testing String to not exhaust API credits
+        // this.template();
 
         this.charactersonscreen?.forEach(character => {
             this.renderer.setAttribute(character.nativeElement, 'class', '')
@@ -220,8 +226,23 @@ export class TypeforceComponent implements AfterViewChecked  {
     
 
     resetTest() {
-        this.resetEvent.emit(true)
+        this.reportScore();
     }
+
+    // Set the next story type 
+    setStoryType(event : MouseEvent) {
+
+        let storytypeselectors = document.querySelectorAll('.story-type-selector');
+        storytypeselectors.forEach(element => {
+            element.classList.remove('selected-story-type')
+        })
+        let target = <HTMLElement>  event.target;
+        this.storytype = target.innerHTML
+        target.classList.add('selected-story-type');
+        this.resetTest();
+    }
+
+
 
 
 // Set first active character

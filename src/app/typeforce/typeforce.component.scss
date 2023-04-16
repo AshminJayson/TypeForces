@@ -53,6 +53,20 @@ span[waswrong = 'true'].correct {
     animation: blinkingcursor infinite 1.25s;
 }
 
+#storytypediv {
+    ul {
+
+        li {
+            letter-spacing: 1px;
+        }
+
+        li.selected-story-type {
+            color: rgb(148, 163, 184);
+            font-weight: bold;
+        }
+    }
+}
+
 
 
 @keyframes blinkingcursor {
