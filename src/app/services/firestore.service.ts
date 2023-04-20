@@ -38,7 +38,7 @@ export class FirestoreService {
 		
 		const querySnapShot = await getDocs(scoresQuery);
 		
-		let leaderboard :any = [];
+		let leaderboard : any = [];
 		querySnapShot.forEach((doc) => {
 			leaderboard.push(doc.data())
 		})
@@ -50,6 +50,7 @@ export class FirestoreService {
 	async getUserScores() {
 		
 		if (!this.authenticationService.auth.currentUser) return 
+
 		const user = this.authenticationService.auth.currentUser
 		
 		const scoresRef = collection(this.db, "Scores");
@@ -57,13 +58,11 @@ export class FirestoreService {
 		
 		const querySnapShot = await getDocs(scoresQuery);
 		
-		let scores :any = [];
+		let scores : any = [];
 		
 		querySnapShot.forEach(doc => {
 			scores.push(doc.data())
 		})
-		
-		// console.log(scores)
 		
 		return scores;
 	}

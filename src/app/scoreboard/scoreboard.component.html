@@ -1,0 +1,40 @@
+<div class="flex items-center w-screen p-20 mt-5 justify-evenly">
+    <div #userscores id="userscores">
+        <h3 class="my-5 text-lg font-bold text-center"> > Your Best Scores < </h3>
+        <p *ngIf="!loggedIn" class="my-4 text-center">Login to view your scores 🪄</p>
+        <p *ngIf="!loggedIn" class="my-4 text-center">And get a chance to beat the <span class="text-slate-500">FORCE</span></p>
+        <table *ngIf="loggedIn">
+            <tr>
+                <th>Rank</th>
+                <th>WPM</th>
+                <th>Accuracy</th>
+                <th>Time Taken</th>
+            </tr>
+            <tr *ngFor="let score of userScores; let i = index">
+                <td>{{i+1}}</td>
+                <td>{{score.WPM}}</td>
+                <td>{{score.Accuracy}}</td>
+                <td>{{score.timeTaken}}</td>
+            </tr>
+        </table>
+    </div>
+    <div #globalleaderboard id="globalleaderboard">
+        <h4 class="my-5 text-lg font-bold text-center"> > Global Rankings <</h4>
+        <table>
+            <tr>
+                <th>Rank</th>
+                <th>Username</th>
+                <th>WPM</th>
+                <th>Accuracy</th>
+                <th>Time Taken</th>
+            </tr>
+            <tr *ngFor="let score of globalScores; let i = index">
+                <td>{{i+1}}</td>
+                <td>{{score.name}}</td>
+                <td>{{score.WPM}}</td>
+                <td>{{score.Accuracy}}</td>
+                <td>{{score.timeTaken}}</td>
+            </tr>
+        </table>
+    </div>
+</div>

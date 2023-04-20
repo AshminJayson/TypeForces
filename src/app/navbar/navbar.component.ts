@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthenticationService } from '../services/authentication.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'app-navbar',
@@ -9,11 +10,17 @@ import { AuthenticationService } from '../services/authentication.service';
 export class NavbarComponent {
     navheading: string = 'TYPE FORCES';
 
-    loggedIn: boolean = false;
+    loggedIn !: boolean;
 
-    constructor(private authenticationService: AuthenticationService) {}
+    constructor(private authenticationService: AuthenticationService, private router: Router, private activatedRoute : ActivatedRoute) {}
 
-    googleAuth() {
+    ngOnInit() {
+        this.authenticationService.tryRelogin().then(() => {
+            this.setLoginStatus();
+        }) ;
+    }
+
+    signIn() {
         this.authenticationService.signInWithGoogle().then(() => {
             this.setLoginStatus();
         });
@@ -29,5 +36,12 @@ export class NavbarComponent {
 
     setLoginStatus() {
         this.loggedIn = this.authenticationService.auth.currentUser;
+    }
+
+    navigateHome() {
+        this.router.navigate(['/']);
+    }
+    redirectToScores() {
+        this.router.navigate(['/scores']);
     }
 }

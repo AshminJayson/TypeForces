@@ -1,11 +1,11 @@
-<div id="nav" class="flex justify-center w-screen px-20">
+<div id="nav" class="flex items-center justify-center w-screen px-20">
     <div></div>
     <div>
-        <p class="text-3xl font-bold text-center">{{navheading}}</p>
+        <p class="text-3xl font-bold text-center cursor-pointer" (click)="navigateHome()">{{navheading}}</p>
     </div>
     <div class="flex justify-end gap-4">
-
-        <p *ngIf="!loggedIn" (click)="googleAuth()">Login</p>
-        <p *ngIf="loggedIn" (click)="signOut()">Sign Out</p>
+        <p class="cursor-pointer" (click)="redirectToScores() ">Scores</p>
+        <p class="cursor-pointer" *ngIf="!loggedIn" (click)="signIn()">Login</p>
+        <p class="cursor-pointer" *ngIf="loggedIn" (click)="signOut()">Sign Out</p>
     </div>
 </div>

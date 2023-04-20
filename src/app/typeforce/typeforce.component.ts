@@ -12,8 +12,9 @@ import { FirestoreService } from '../services/firestore.service';
 export class TypeforceComponent implements AfterViewChecked  {
 
     // Text variables
-    storytype : string = 'LOVE'
-    textgen : string = 'random text that I just got from somewhere to the changes that are here.'
+    storytype : string = 'LOVE';
+    maxwords : number = 40;
+    textgen : string = 'random text that I just got from somewhere to the changes that are here.';
     
     wordgenarray : string[] = [];
     charactergenarray : string[] = [];
@@ -37,7 +38,6 @@ export class TypeforceComponent implements AfterViewChecked  {
 
 
     
-    @Input() maxwords : number = 0;
     @Output() resetEvent = new EventEmitter<boolean>();
 
 
