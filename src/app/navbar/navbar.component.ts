@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthenticationService } from '../services/authentication.service';
 
 @Component({
     selector: 'app-navbar',
@@ -8,5 +9,25 @@ import { Component } from '@angular/core';
 export class NavbarComponent {
     navheading: string = 'TYPE FORCES';
 
-    constructor() {}
+    loggedIn: boolean = false;
+
+    constructor(private authenticationService: AuthenticationService) {}
+
+    googleAuth() {
+        this.authenticationService.signInWithGoogle().then(() => {
+            this.setLoginStatus();
+        });
+
+    }
+    
+    signOut() {
+        this.authenticationService.signOut().then(() => {
+            this.setLoginStatus();
+        });
+
+    }
+
+    setLoginStatus() {
+        this.loggedIn = this.authenticationService.auth.currentUser;
+    }
 }

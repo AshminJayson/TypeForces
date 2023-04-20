@@ -1,3 +1,11 @@
-<div class="w-screen">
-    <p class="text-3xl font-bold text-center">{{navheading}}</p>
+<div id="nav" class="flex justify-center w-screen px-20">
+    <div></div>
+    <div>
+        <p class="text-3xl font-bold text-center">{{navheading}}</p>
+    </div>
+    <div class="flex justify-end gap-4">
+
+        <p *ngIf="!loggedIn" (click)="googleAuth()">Login</p>
+        <p *ngIf="loggedIn" (click)="signOut()">Sign Out</p>
+    </div>
 </div>

@@ -1,6 +1,8 @@
-import { AfterViewChecked,  Component, ElementRef, EventEmitter, HostListener,  Input,  Output,  QueryList, Renderer2, ViewChild, ViewChildren  } from '@angular/core';
+import { AfterViewChecked,  Component, ElementRef, EventEmitter, HostListener,  Input,  Output,  QueryList, Renderer2,  ViewChildren  } from '@angular/core';
 import { StopwatchService } from './services/stopwatch.service';
 import { StorygptService } from './services/storygpt.service';
+import { AuthenticationService } from '../services/authentication.service';
+import { FirestoreService } from '../services/firestore.service';
 
 @Component({
     selector: 'app-typeforce',
@@ -10,7 +12,7 @@ import { StorygptService } from './services/storygpt.service';
 export class TypeforceComponent implements AfterViewChecked  {
 
     // Text variables
-    storytype : string = 'HAPPINESS'
+    storytype : string = 'LOVE'
     textgen : string = 'random text that I just got from somewhere to the changes that are here.'
     
     wordgenarray : string[] = [];
@@ -40,7 +42,7 @@ export class TypeforceComponent implements AfterViewChecked  {
 
 
     
-    constructor(private renderer : Renderer2, private stopwatch : StopwatchService, private storyGenerator : StorygptService) {}
+    constructor(private renderer : Renderer2, private stopwatch : StopwatchService, private storyGenerator : StorygptService, private firestoreservice: FirestoreService) {}
 
     ngOnInit() { 
         this.setNewStory()
@@ -48,10 +50,13 @@ export class TypeforceComponent implements AfterViewChecked  {
 
 
     template() {
-        let res = "Zero is a beautiful number. Not because it is round and cute (that could be an argument for it nevertheless) but because what it signifies. It marks the beginning of something. It marks the lowest something, or someone can go."
+        
+        let res = ""
+        res = "Zero is a beautiful number"
         this.resetScores()
         this.textgen = res.trim();
         this.currentarrayindex = 0;
+        this.wordgenarray = [];
         this.wordgenarray = this.textgen.split(/(?<=\s)/);
         this.charactergenarray = this.textgen.split('');
         this.valid = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,?/><;:][]{}()!@#$%^&*1234567890-_=+ '.split('')
@@ -60,21 +65,29 @@ export class TypeforceComponent implements AfterViewChecked  {
 
 
 
-    setNewStory() {
+    async setNewStory() {
 
-        
+        // this.firestoreservice.getLeaderboard();
+        // this.firestoreservice.getUserScores();
         this.nextStoryTimer()
         
-        this.storyGenerator.generateStory(this.maxwords, this.storytype).then(res => {
+        this.firestoreservice.getStory(this.storytype).then(res => {
+        // this.storyGenerator.generateStory(this.maxwords, this.storytype).then(res => {
             
             this.resetScores()
             this.textgen = res.trim();
+
+            this.firestoreservice.addStory(this.storytype, this.textgen); // Add story to firestore
+
             this.currentarrayindex = 0;
             this.wordgenarray = this.textgen.split(/(?<=\s)/);
             this.charactergenarray = this.textgen.split('');
             this.valid = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,?/><;:][]{}()!@#$%^&*1234567890-_=+ '.split('')
             this.valid.push('Backspace', "'", '"')
-
+            
+            this.charactersonscreen?.forEach(character => {
+                this.renderer.setAttribute(character.nativeElement, 'class', '')
+            })
         }
         )
 
@@ -82,9 +95,6 @@ export class TypeforceComponent implements AfterViewChecked  {
         // Testing String to not exhaust API credits
         // this.template();
 
-        this.charactersonscreen?.forEach(character => {
-            this.renderer.setAttribute(character.nativeElement, 'class', '')
-        })
     }
 
     resetScores() {
@@ -192,26 +202,31 @@ export class TypeforceComponent implements AfterViewChecked  {
         const characterunderstudy = this.charactersonscreen.get(this.currentarrayindex)
         this.renderer.setAttribute(characterunderstudy?.nativeElement, 'class', 'incorrect')
         this.renderer.setAttribute(characterunderstudy?.nativeElement, 'wasWrong', 'true')
-
+        
         this.currentarrayindex++;
         this.setActiveCharacter()
-
+        
     }
-
+    
     // Report the score
     reportScore() {
         this.status = 2
         this.wpm = Math.round(this.correctcharacters  / (5 * this.stopwatch.getTimeMinutes()))
         this.accuracy = Math.round((this.correctcharacters / this.textgen.length) * 100)
 
+        if (this.currentarrayindex === this.textgen.length) {
+            this.firestoreservice.addScore(this.wpm, this.accuracy, this.elapsedtime);
+        } 
+
+        
         this.remainingtime = 4;
         this.nextStoryTimer()
-
+        
         setTimeout(() => {
             this.setNewStory()
         }, 4000);
     }
-
+    
     nextStoryTimer() {
         this.nextstory = true;
         const timing = setInterval(() => {
@@ -224,14 +239,14 @@ export class TypeforceComponent implements AfterViewChecked  {
         }, 1000)
     }
     
-
+    
     resetTest() {
         this.reportScore();
     }
-
+    
     // Set the next story type 
     setStoryType(event : MouseEvent) {
-
+        
         let storytypeselectors = document.querySelectorAll('.story-type-selector');
         storytypeselectors.forEach(element => {
             element.classList.remove('selected-story-type')
@@ -241,17 +256,22 @@ export class TypeforceComponent implements AfterViewChecked  {
         target.classList.add('selected-story-type');
         this.resetTest();
     }
-
-
-
-
-// Set first active character
+    
+    
+    
+    
+    // Set first active character
     ngAfterViewChecked(): void {
         if(this.charactersonscreen.get(0) && !this.viewcheckedstate) { 
+            
+            this.charactersonscreen.forEach(character => {
+                this.renderer.setAttribute(character.nativeElement, 'class', '')
+                this.renderer.setAttribute(character.nativeElement, 'wasWrong', '')
+            })
             this.renderer.setAttribute(this.charactersonscreen.get(0)?.nativeElement, 'class', 'active')
             this.viewcheckedstate = true       
         }   
     }
-
-
+    
+    
 }

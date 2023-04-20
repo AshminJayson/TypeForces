@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Configuration, OpenAIApi } from 'openai';
 
-import { environment } from 'src/environments/environment';
+import { gptenvironment } from 'src/environments/environment';
 
 
 @Injectable({
@@ -14,7 +14,7 @@ export class StorygptService {
     openai !: OpenAIApi;
 
     constructor() {
-        this.gptapiKey = environment.CHATGPT_API_URL;
+        this.gptapiKey = gptenvironment.CHATGPT_API_URL;
         const configuration = new Configuration({
             apiKey: this.gptapiKey,
         });
