@@ -1,4 +1,4 @@
-import { AfterViewChecked,  Component, ElementRef, EventEmitter, HostListener,  Input,  Output,  QueryList, Renderer2,  ViewChildren  } from '@angular/core';
+import { AfterViewChecked,  Component, ElementRef, EventEmitter, HostListener, Output,  QueryList, Renderer2,  ViewChildren  } from '@angular/core';
 import { StopwatchService } from './services/stopwatch.service';
 import { StorygptService } from './services/storygpt.service';
 import { AuthenticationService } from '../services/authentication.service';
@@ -12,7 +12,7 @@ import { FirestoreService } from '../services/firestore.service';
 export class TypeforceComponent implements AfterViewChecked  {
 
     // Text variables
-    storytype : string = 'LOVE';
+    storytype : string = 'MOTIVATION';
     maxwords : number = 40;
     textgen : string = 'random text that I just got from somewhere to the changes that are here.';
     
@@ -20,6 +20,7 @@ export class TypeforceComponent implements AfterViewChecked  {
     charactergenarray : string[] = [];
     currentarrayindex : number = 0;
     valid : string[] = [];
+    timestop = 4;
 
     // States
     viewcheckedstate : boolean = false;
@@ -71,8 +72,8 @@ export class TypeforceComponent implements AfterViewChecked  {
         // this.firestoreservice.getUserScores();
         this.nextStoryTimer()
         
-        this.firestoreservice.getStory(this.storytype).then(res => {
-        // this.storyGenerator.generateStory(this.maxwords, this.storytype).then(res => {
+        // this.firestoreservice.getStory(this.storytype).then(res => {
+        this.storyGenerator.generateStory(this.maxwords, this.storytype).then(res => {
             
             this.resetScores()
             this.textgen = res.trim();
@@ -219,12 +220,12 @@ export class TypeforceComponent implements AfterViewChecked  {
         } 
 
         
-        this.remainingtime = 4;
+        this.remainingtime = this.timestop;
         this.nextStoryTimer()
         
         setTimeout(() => {
             this.setNewStory()
-        }, 4000);
+        }, this.timestop * 1000);
     }
     
     nextStoryTimer() {
@@ -232,7 +233,7 @@ export class TypeforceComponent implements AfterViewChecked  {
         const timing = setInterval(() => {
             if (this.remainingtime === 0 || this.status != 2) {
                 clearInterval(timing);
-                this.remainingtime = 4;
+                this.remainingtime = this.timestop;
                 this.nextstory = false;
             }
             this.remainingtime--;

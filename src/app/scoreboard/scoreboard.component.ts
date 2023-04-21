@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { FirestoreService } from '../services/firestore.service';
+import { TriggerService } from '../services/trigger.service';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
 	selector: 'app-scoreboard',
@@ -11,19 +13,25 @@ export class ScoreboardComponent {
 	globalScores : any =  []
 	loggedIn : boolean = false;
 
-	constructor(private firestoreService : FirestoreService) {
+	constructor(private firestoreService : FirestoreService, private triggerService : TriggerService, private router : Router, private activatedRoute : ActivatedRoute) {
+
+		this.triggerService.message$.subscribe((message : string) => {
+			this.scoreSetter();
+		})
 
 		// One second timeout to compensate for the relogin during page reloads
-		if (localStorage.getItem('userCredential')) this.loggedIn = true;
 		setTimeout(() => {
 			this.scoreSetter();
 		}, 1000);
-
+		
 	}
 	
 	
-
 	scoreSetter() {
+
+		this.loggedIn = false;
+		if (localStorage.getItem('userCredential')) this.loggedIn = true;
+		
 		this.firestoreService.getLeaderboard().then(
 			leaderboard => {
                 this.globalScores = leaderboard;
@@ -33,7 +41,6 @@ export class ScoreboardComponent {
 		this.firestoreService.getUserScores().then(
 			userScores => {
                 this.userScores = userScores;
-				console.log(this.userScores);
             }
 		)
 	}

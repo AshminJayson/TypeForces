@@ -34,7 +34,7 @@ export class FirestoreService {
 	
 	async getLeaderboard() {
 		const scoresRef = collection(this.db, "Scores");
-		const scoresQuery = query(scoresRef, orderBy("WPM", "desc"), limit(10));
+		const scoresQuery = query(scoresRef, orderBy("WPM", "desc"), limit(5));
 		
 		const querySnapShot = await getDocs(scoresQuery);
 		
@@ -54,7 +54,7 @@ export class FirestoreService {
 		const user = this.authenticationService.auth.currentUser
 		
 		const scoresRef = collection(this.db, "Scores");
-		const scoresQuery = query(scoresRef, where("useremail", "==", user.email) ,orderBy("WPM", "desc"), limit(10));
+		const scoresQuery = query(scoresRef, where("useremail", "==", user.email) ,orderBy("WPM", "desc"), limit(5));
 		
 		const querySnapShot = await getDocs(scoresQuery);
 		
