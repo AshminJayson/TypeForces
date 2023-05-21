@@ -12,7 +12,7 @@ import { FirestoreService } from '../services/firestore.service';
 export class TypeforceComponent implements AfterViewChecked  {
 
     // Text variables
-    storytype : string = 'MOTIVATION';
+    storytype : string = 'GRIEF';
     maxwords : number = 40;
     textgen : string = 'random text that I just got from somewhere to the changes that are here.';
     
@@ -68,12 +68,10 @@ export class TypeforceComponent implements AfterViewChecked  {
 
     async setNewStory() {
 
-        // this.firestoreservice.getLeaderboard();
-        // this.firestoreservice.getUserScores();
         this.nextStoryTimer()
         
-        // this.firestoreservice.getStory(this.storytype).then(res => {
-        this.storyGenerator.generateStory(this.maxwords, this.storytype).then(res => {
+        this.firestoreservice.getStory(this.storytype).then(res => {
+        // this.storyGenerator.generateStory(this.maxwords, this.storytype).then(res => {
             
             this.resetScores()
             this.textgen = res.trim();
